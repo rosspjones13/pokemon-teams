@@ -33,7 +33,6 @@ function renderTrainer(trainer) {
   let ul = document.createElement('ul')
   ul.dataset.trainerId = trainer.id
 
-  
   // Append trainer elements to div
   div.append(p, addButton, ul)
   
@@ -83,11 +82,16 @@ function renderPokemon(pokemon) {
   releaseBtn.addEventListener('click', () => releasePokemon(pokemon))
 }
 
-
+// First remove the DOM element then remove the 
 function releasePokemon(pokemon) {
-  // let pokemonList = document.querySelector(`[data-trainer-id="${pokemon.trainer_id}"]`)
+  // Optimistic clearing of DOM pokemon item
   let pokemonListItem = document.querySelector(`[data-pokemon-id="${pokemon.id}"]`)
-
   pokemonListItem.innerHTML = ""
+
+  // Removing pokemon on server end
   console.log('deleting pokemon ' + pokemon.id + " " + pokemon.nickname)
+  fetch((getUrl() + 'pokemons/' + pokemon.id),{
+    method: "DELETE"
+  })
+  .then(res => res.json())
 }
