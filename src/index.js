@@ -89,9 +89,9 @@ function releasePokemon(pokemon) {
   pokemonListItem.innerHTML = ""
 
   // Removing pokemon on server end
-  console.log('deleting pokemon ' + pokemon.id + " " + pokemon.nickname)
   fetch((getUrl() + 'pokemons/' + pokemon.id),{
     method: "DELETE"
   })
   .then(res => res.json())
+  .then(console.log(`pokemon ${pokemon.nickname} (${pokemon.species}) successfully deleted`))
 }
