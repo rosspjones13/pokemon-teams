@@ -22,7 +22,7 @@ function getAllTrainers() {
 function renderTrainer(trainer) {
   // Grab main tag
   let main = document.querySelector('main')
-
+  
   // Create div and inner elements
   let div = document.createElement('div')
   div.className = "card"
@@ -43,12 +43,21 @@ function renderTrainer(trainer) {
   trainer.pokemons.forEach(pokemon => renderPokemon(pokemon))
   
   // After element is visible add an event listener to add pokemon
-  addButton.addEventListener('click', () => getPokemon(trainer))
+  addButton.addEventListener('click', () => {
+    getPokemon(trainer)
+  })
 }
   
-  // Adds a pokemon to the trainer on the server
-  function getPokemon(trainer) {
-    data = {trainer_id: trainer.id}
+// Adds a pokemon to the trainer on the server
+function getPokemon(trainer) {
+  // Find ul to count children
+  let ul = document.querySelector(`[data-trainer-id="${trainer.id}"]`)
+
+  // Data to be inserted
+  let data = {trainer_id: trainer.id}
+
+  // Only add a pokemon if the trainer has less than 6 on their team
+  if (ul.childElementCount < 6){
     fetch((getUrl() + 'pokemons'), {
       method: 'POST',
       headers: {
@@ -58,13 +67,15 @@ function renderTrainer(trainer) {
     })
       .then(res => res.json())
       .then(pokemon => renderPokemon(pokemon))
+  } else {
+    alert("You already have 6 Pokemon! Release a Pokemon first.")
+  }
 }
 
 // Renders a trainers single pokemon
 function renderPokemon(pokemon) {
   // Get ul to clear current list and append new full pokemon list 
   let ul = document.querySelector(`[data-trainer-id="${pokemon.trainer_id}"]`)
-  // debugger
 
   // Grab all of trainers pokemon
   let li = document.createElement('li')
@@ -79,19 +90,28 @@ function renderPokemon(pokemon) {
   ul.appendChild(li)
 
   // After release element is visible add release event listener
-  releaseBtn.addEventListener('click', () => releasePokemon(pokemon))
+  releaseBtn.addEventListener('click', () => {
+    releasePokemon(pokemon)
+  })
 }
 
 // First remove the DOM element then remove the 
 function releasePokemon(pokemon) {
   // Optimistic clearing of DOM pokemon item
   let pokemonListItem = document.querySelector(`[data-pokemon-id="${pokemon.id}"]`)
-  pokemonListItem.innerHTML = ""
+  let pokemonList = pokemonListItem.parentElement
+
+  // Find the current pokemon li item and remove it
+  pokemonList.childNodes.forEach(node => {
+    if (node === pokemonListItem) {
+      pokemonList.removeChild(node)
+    }
+  })
 
   // Removing pokemon on server end
   fetch((getUrl() + 'pokemons/' + pokemon.id),{
     method: "DELETE"
   })
-  .then(res => res.json())
-  .then(console.log(`pokemon ${pokemon.nickname} (${pokemon.species}) successfully deleted`))
+    .then(res => res.json())
+    .then(console.log(`pokemon ${pokemon.nickname} (${pokemon.species}) successfully deleted`))
 }
