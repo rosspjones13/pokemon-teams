@@ -33,29 +33,19 @@ function renderTrainer(trainer) {
   let ul = document.createElement('ul')
   ul.dataset.trainerId = trainer.id
 
+  
+  // Append trainer elements to div
+  div.append(p, addButton, ul)
+  
+  // Append whole trainer div to main
+  main.append(div)
+
   // Create pokemon list items to append to ul
-  // trainer.pokemons.forEach(pokemon => {
-    //   let li = document.createElement('li')
-    //   li.innerText = pokemon.nickname + ` (${pokemon.species})`
-    //   let releaseBtn = document.createElement('button')
-    //   releaseBtn.className = "release"
-    //   releaseBtn.innerText = "Release"
-    
-    //   // Append button to pokemon li and then li to ul
-    //   li.appendChild(releaseBtn)
-    //   ul.appendChild(li)
-    // })
-    
-    // Append trainer elements to div
-    div.append(p, addButton, ul)
-    
-    // Append whole trainer div to main
-    main.append(div)
-    trainer.pokemons.forEach(pokemon => renderPokemon(pokemon))
-    
-    // After element is visible add an event listener to add pokemon
-    addButton.addEventListener('click', () => getPokemon(trainer))
-  }
+  trainer.pokemons.forEach(pokemon => renderPokemon(pokemon))
+  
+  // After element is visible add an event listener to add pokemon
+  addButton.addEventListener('click', () => getPokemon(trainer))
+}
   
   // Adds a pokemon to the trainer on the server
   function getPokemon(trainer) {
@@ -80,6 +70,7 @@ function renderPokemon(pokemon) {
   // Grab all of trainers pokemon
   let li = document.createElement('li')
   li.innerText = pokemon.nickname + ` (${pokemon.species})`
+  li.dataset.pokemonId = pokemon.id
   let releaseBtn = document.createElement('button')
   releaseBtn.className = "release"
   releaseBtn.innerText = "Release"
@@ -87,5 +78,16 @@ function renderPokemon(pokemon) {
   // Append button to pokemon li and then li to ul
   li.appendChild(releaseBtn)
   ul.appendChild(li)
+
+  // After release element is visible add release event listener
+  releaseBtn.addEventListener('click', () => releasePokemon(pokemon))
 }
 
+
+function releasePokemon(pokemon) {
+  // let pokemonList = document.querySelector(`[data-trainer-id="${pokemon.trainer_id}"]`)
+  let pokemonListItem = document.querySelector(`[data-pokemon-id="${pokemon.id}"]`)
+
+  pokemonListItem.innerHTML = ""
+  console.log('deleting pokemon ' + pokemon.id + " " + pokemon.nickname)
+}
